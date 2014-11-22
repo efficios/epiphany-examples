@@ -25,7 +25,7 @@
 #include "e_lib.h"
 #include "barectf.h"
 
-#define PACKET_SIZE 512
+#define PACKET_SIZE	512
 #define FIRST_ROW	32
 #define FIRST_COL	8
 #define WAND_BIT	(1 << 3)
@@ -84,7 +84,7 @@ static void __attribute__((interrupt)) wand_trace_isr(int signum)
  * value.
  *
  * @param data	Unused user data
- * @returns		Current clock value
+ * @returns	Current clock value
  */
 static uint32_t get_clock(void* data)
 {
