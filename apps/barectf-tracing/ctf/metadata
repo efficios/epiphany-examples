@@ -1,0 +1,76 @@
+/* CTF 1.8 */
+
+typealias integer {size = 8; align = 8;}			:= uint8_t;
+typealias integer {size = 16; align = 16;}			:= uint16_t;
+typealias integer {size = 32; align = 32;}			:= uint32_t;
+typealias integer {size = 8; align = 8; signed = true;}		:= int8_t;
+typealias integer {size = 16; align = 16; signed = true;} 	:= int16_t;
+typealias integer {size = 32; align = 32; signed = true;} 	:= int32_t;
+
+trace {
+	major = 1;
+	minor = 8;
+	byte_order = le;
+	packet.header := struct {
+		uint32_t magic;
+		uint32_t stream_id;
+	};
+};
+
+env {
+	domain = "bare";
+	tracer_name = "barectf";
+	ecores = 16;
+	first_ecore_row = 32;
+	first_ecore_col = 8;
+	tracer_major = 0;
+	tracer_minor = 1;
+	tracer_patchlevel = 0;
+};
+
+clock {
+	name = my_clock;
+	freq = 1000000000;
+	offset = 0;
+};
+
+typealias integer {
+	size = 32;
+	map = clock.my_clock.value;
+} := my_clock_int_t;
+
+stream {
+	id = 0;
+
+	packet.context := struct {
+		my_clock_int_t timestamp_begin;
+		my_clock_int_t timestamp_end;
+		uint32_t content_size;
+		uint32_t packet_size;
+		integer {size = 6;} row;
+		integer {size = 6;} col;
+	};
+
+	event.header := struct {
+		uint32_t id;
+		my_clock_int_t timestamp;
+	};
+};
+
+event {
+	name = "epiphanious";
+	id = 0;
+	stream_id = 0;
+
+	fields := struct {
+		uint32_t sum;
+	};
+};
+
+event {
+	name = "init";
+	id = 1;
+	stream_id = 0;
+
+	fields := struct {};	/* no fields! */
+};
